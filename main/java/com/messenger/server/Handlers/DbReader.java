@@ -2,7 +2,7 @@ package com.messenger.server.Handlers;
 
 import java.sql.ResultSet;
 
-public interface DbReader {
+interface DbReader {
 
     ResultSet checkForExistingUser(String s);
 }
