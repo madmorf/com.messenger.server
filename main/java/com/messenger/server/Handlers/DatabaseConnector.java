@@ -31,7 +31,7 @@ class DatabaseConnector {
     private Connection connection;
 
 
-    private DatabaseConnector() {
+    DatabaseConnector() {
         connectToDatabase();
     }
 

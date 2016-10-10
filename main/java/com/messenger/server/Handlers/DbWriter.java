@@ -2,6 +2,6 @@ package com.messenger.server.Handlers;
 
 interface DbWriter {
 
-    void writeNewUser(String s);
+    void writeNewUser(String userId, String userNam, String passw);
 
 }

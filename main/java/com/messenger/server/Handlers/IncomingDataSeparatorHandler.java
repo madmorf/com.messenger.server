@@ -6,35 +6,47 @@ import java.sql.SQLException;
 
 class IncomingDataSeparatorHandler {
 
-//    private DatabaseConnector dbConnector = new DatabaseConnector();
-    private DbReader reader = new DatabaseWorker();
+    private static final String SEPARATOR = ";";
 
-    {
-//        dbConnector.connectDBorDIE();
+    private static final String REGISTRATION_KEY = "01";
+
+    private static final int SUCCESSFUL = 0;
+
+    private static final int UNSUCCESSFUL = 1;
+
+    private DbReader reader = new DbWorker();
+
+    private DbWriter writer = new DbWorker();
+
+    private String userName;
+
+    private String userId;
+
+    private String passw;
+
+    private void separateInputStream(String incomingStream) {
+        String[] s = incomingStream.split(SEPARATOR);
+        userId = s[1];
+        userName = s[2];
+        passw = s[3];
     }
 
     void registerUser(String incomingStream, PrintWriter out) {
-        String[] s = incomingStream.split(";");
-        if (!checkUserId(s[1])) {
-//            try {
-//                System.out.println("Регистрация пользователя");
-////                dbConnector.getStatement().executeUpdate("INSERT INTO users VALUES (" + s[1] + "," + "null,'" + s[2] +
-//                        "'," + " null," + "null," + "null,'" + s[3] + "')");
-//                out.println("01;" + s[1] + ";0;");
-                System.out.println("01;" + s[1] + ";0;");
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
+        separateInputStream(incomingStream);
+        if (!checkUserId(userId)) {
+            writer.writeNewUser(userId, userName, passw);
+            out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + SUCCESSFUL);
+//                System.out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + SUCCESSFUL);
         } else {
-            out.println("01;" + s[1] + ";1;");
-            System.out.println("01;" + s[1] + ";1;");
+            out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + UNSUCCESSFUL);
+//            System.out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + UNSUCCESSFUL);
         }
     }
 
     private Boolean checkUserId(String userid) {
         ResultSet rs = reader.checkForExistingUser(userid);
         try {
-            System.out.println("Провека пользователя");
+//            System.out.println("Провека пользователя");
             while (rs.next()) {
                 String s = rs.getString("user_id");
                 if (s.equals(userid))

@@ -4,5 +4,5 @@ import java.sql.ResultSet;
 
 interface DbReader {
 
-    ResultSet checkForExistingUser(String s);
+    ResultSet checkForExistingUser(String userId);
 }

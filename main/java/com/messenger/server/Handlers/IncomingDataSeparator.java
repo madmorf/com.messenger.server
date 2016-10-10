@@ -21,7 +21,7 @@ public class IncomingDataSeparator {
     private void select(String key, PrintWriter out) {
         switch (key) {
             case "01":
-                System.out.println("Регистрация пользователя");
+//                System.out.println("Регистрация пользователя");
                 incomingDataSeparatorHandler.registerUser(incomingStream, out);
                 break;
             case "02":
