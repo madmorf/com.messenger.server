@@ -1,10 +1,10 @@
-package com.messenger.server.Handlers;
+package com.messenger.server.Handlers.DbWorker;
 
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-class DbWorker extends DatabaseConnector implements DbReader,DbWriter {
+public class DbWorker extends DatabaseConnector implements DbReader, DbWriter {
 
     private static final String CHECK_ID = "SELECT user_id FROM users WHERE user_id = ";
 
@@ -25,7 +25,7 @@ class DbWorker extends DatabaseConnector implements DbReader,DbWriter {
     public void writeNewUser(String userId, String userName, String passw) {
         try {
             getStatement().executeUpdate("INSERT INTO users VALUES ('" + userId + "',null,'" + userName +
-                            "',null,null,null,'" + passw + "')");
+                    "',null,null,null,'" + passw + "')");
         } catch (SQLException e) {
             e.printStackTrace();
         }

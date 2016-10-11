@@ -1,8 +1,9 @@
-package com.messenger.server.Handlers;
+package com.messenger.server.Handlers.DbWorker;
+
 
 import java.sql.*;
 
-class DatabaseConnector {
+public class DbChecker {
 
     private static final String DB_NAME = "test";
 
@@ -26,52 +27,25 @@ class DatabaseConnector {
 
     private String databaseURL = sqlURL + DB_NAME;
 
-    private Statement statement;
+    private DatabaseConnector databaseConnector = new DatabaseConnector();
 
-    private Connection connection;
-
-
-    DatabaseConnector() {
-        connectToDatabase();
+    public DbChecker(){
+        checkDatabase();
     }
 
-    /**
-     * Connection creator
-     */
-    private void createConnection(String url) throws SQLException {
-        connection = DriverManager.getConnection(url, user, password);
-    }
-
-    private void createStatement() throws SQLException {
-        statement = connection.createStatement();
-    }
-
-    /**
-     * Database creator if does not exist
-     */
     private void createDatabase() throws SQLException {
-        statement.execute(CREATE_DB);
+        databaseConnector.getStatement(sqlURL, user, password).execute(CREATE_DB);
+        databaseConnector.closeConnection();
     }
 
-    /**
-     * Recreate with new url
-     * Create table if does not exist
-     */
     private void createTable() throws SQLException {
-        createConnection(databaseURL);
-        createStatement();
-        statement.execute(CREATE_TABLE);
+        databaseConnector.getStatement(databaseURL, user, password).execute(CREATE_TABLE);
+        databaseConnector.closeConnection();
     }
 
-    /**
-     * Check database for existing
-     * return false if not find
-     */
     private boolean findDatabase() throws SQLException {
-        createConnection(sqlURL);
-        createStatement();
         ResultSet rs;
-        rs = statement.executeQuery(CHECK_DB);
+        rs = databaseConnector.getStatement(sqlURL, user, password).executeQuery(CHECK_DB);
         while (rs.next()) {
             if (rs.getString(1).equals(DB_NAME)) {
                 return true;
@@ -80,28 +54,15 @@ class DatabaseConnector {
         return false;
     }
 
-    /**
-     * Create database connetion
-     */
-    private void connectToDatabase() {
+    private void checkDatabase() {
         try {
             if (!findDatabase()) {
                 createDatabase();
                 createTable();
-            } else {
-                createConnection(databaseURL);
-                createStatement();
             }
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e);
         }
-    }
-
-    /**
-     * Return statement
-     */
-    Statement getStatement() {
-        return statement;
     }
 }

@@ -48,6 +48,7 @@ public class SocketsCreator extends Thread {
             try {
                 socket.close();
             } catch (IOException e) {
+
                 System.err.println("Socket not closed");
             }
         }

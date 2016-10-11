@@ -1,5 +1,9 @@
 package com.messenger.server.Handlers;
 
+import com.messenger.server.Handlers.DbWorker.DbReader;
+import com.messenger.server.Handlers.DbWorker.DbWorker;
+import com.messenger.server.Handlers.DbWorker.DbWriter;
+
 import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,32 +28,40 @@ class IncomingDataSeparatorHandler {
 
     private String passw;
 
-    private void separateInputStream(String incomingStream) {
+    /**
+     * Separate input stream
+     * Extract phone number (userId),username, password
+     */
+    private void extractRegistrationData(String incomingStream) {
         String[] s = incomingStream.split(SEPARATOR);
         userId = s[1];
         userName = s[2];
         passw = s[3];
     }
 
+    /**
+     * Write new user to database
+     */
     void registerUser(String incomingStream, PrintWriter out) {
-        separateInputStream(incomingStream);
+        extractRegistrationData(incomingStream);
         if (!checkUserId(userId)) {
             writer.writeNewUser(userId, userName, passw);
             out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + SUCCESSFUL);
-//                System.out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + SUCCESSFUL);
         } else {
             out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + UNSUCCESSFUL);
-//            System.out.println(REGISTRATION_KEY + SEPARATOR + userId + SEPARATOR + UNSUCCESSFUL);
         }
     }
 
-    private Boolean checkUserId(String userid) {
-        ResultSet rs = reader.checkForExistingUser(userid);
+    /**
+     * Check database for existing user
+     * Return true\false
+     */
+    private Boolean checkUserId(String userId) {
+        ResultSet rs = reader.checkForExistingUser(userId);
         try {
-//            System.out.println("Провека пользователя");
             while (rs.next()) {
                 String s = rs.getString("user_id");
-                if (s.equals(userid))
+                if (s.equals(userId))
                     return true;
             }
         } catch (SQLException e) {

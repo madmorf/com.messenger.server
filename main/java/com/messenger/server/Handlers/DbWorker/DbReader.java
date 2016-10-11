@@ -1,8 +1,8 @@
-package com.messenger.server.Handlers;
+package com.messenger.server.Handlers.DbWorker;
 
 import java.sql.ResultSet;
 
-interface DbReader {
+public interface DbReader {
 
     ResultSet checkForExistingUser(String userId);
 }
